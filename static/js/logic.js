@@ -1,17 +1,21 @@
 // create the map object
 var myMap = L.map("map", {
-    center: [45.52, -122.67],
-    zoom:5
+    center: [45.52, -90.67],
+    zoom:3
   });
   
   // Adding a tile layer (the background map image) to our map
   // We use the addTo method to add objects to our map
-  L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  var graymap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    tileSize: 512,
     maxZoom: 18,
+    zoomOffset: -1,
     id: "light-v10",
     accessToken: API_KEY  
-  }).addTo(myMap);
+  })
+  
+  graymap.addTo(myMap);
   
 
 // Use d3 to call the json file with data
@@ -34,17 +38,17 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     function mapColor(mag) {
         switch (true) {
             case mag > 5:
-                return "#210578";
+                return "#C9292E";
             case mag > 4:
-                return "#2A0A8F";
+                return "#C98029";
             case mag > 3:
-                return "#370db9";
+                return "#FBB45F";
             case map > 2:
-                return "#026DF5";
+                return "#DCD928";
             case map > 1:
-                return "#02EDF5";
+                return "#FDFB88";
             default:
-                return "#ffffff";
+                return "#83F641";
         }
     }
 
@@ -56,7 +60,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
             return 1;
         }
 
-        return mag * 5;
+        return mag * 4;
 
     }
 
@@ -76,7 +80,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       }
 
 
-    }).addTo(map)
+    }).addTo(myMap)
 
     // create the legend
     var legend = L.control({
@@ -87,18 +91,18 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         var div = L.DomUtil.create("div", "info legend");
 
         var grades = [0,1,2,3,4,5];
-        var colors = [
-                "#ffffff","#02EDF5","#026DF5","#370db9","#2A0A8F","#210578"];
-
+        var colors = ["#83F641","#FDFB88","#DCD928","#FBB45F","#C98029","#C9292E"];
+        
         for (var i = 0; i< grades.length; i++){
+            
             div.innerHTML +=
-            "<i style= 'background: "+ colors[i]+ "'></i> " +
-            grades[i] + (grades[i+1] ? "&ndash;" + grades[i+1]+ "<br>": "+");
+            "<i style='background:" + colors[i] + "'></i>" +
+              grades[i] + (grades[i+1] ? "&ndash;" + grades[i+1]+ "<br>" : "+");
         } 
         return div;
     };
 
-    legend.addTo(map)
+    legend.addTo(myMap);
 
 
 
